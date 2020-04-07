@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css?family=Comfortaa&display=swap&subset=cyrillic,cyrillic-ext');
+body {
+	/* background-image: url(img/kosmos_69530878_orig_.jpg); */
+	/* color: white; */
+	background-color: gainsboro;
+	font-family: Comfortaa, cursive;
+}
+.container {
+	background-color: white;
+}
+.btn_theme_space {
+	color: white;
+	border: 2px solid #0affd133;
+}
+.btn_theme_space:hover {
+	color: white;
+  background-color: rgba(4, 40, 58, 0.66);
+}
+input {
+	border: 2px solid #0affd129;
+	background-color: rgba(4, 40, 58, 0.66);
+	color: white;
+}
+
+/* li > div {
+	padding-top: 0.5rem !important;
+	padding-bottom: 0.5rem !important;
+} */
+
+
