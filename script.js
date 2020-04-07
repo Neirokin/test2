@@ -2,8 +2,10 @@ let doc = document;
 let url = './json/signin.json';
 
 let setUrl = function() {
+    
     fileName = location.href.split("/").slice(-1);
-    url = './json/' + fileName[0].slice(0, -5) + '.json';
+    if(fileName[0] != 'index.html')
+        url = './json/' + fileName[0].slice(0, -5) + '.json';
 }
 
 setUrl();
