@@ -115,8 +115,9 @@ let createReferences = function(data, form) {
                             let ref = doc.createElement('a');
                             ref.textContent = _item.text;
                             ref.href = _item.ref;
+                            label.append(ref);
                         }
-                        label.append(ref);
+                       
                         li.append(label);
                     }
                 });
