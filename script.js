@@ -1,30 +1,26 @@
 let doc = document;
 let url = './json/signin.json';
 
-let setUrl = function() {
-    
-    fileName = location.href.split("/").slice(-1);
-    if(fileName[0] != 'index.html')
+let setUrl = function() {                                       //Название документа используется как 
+    fileName = location.href.split("/").slice(-1);              //URL для генерации форм (все документы названы)
+    if(fileName[0] != 'index.html')                             //в соответствии с формой
         url = './json/' + fileName[0].slice(0, -5) + '.json';
 }
 
 setUrl();
-                       //Глобальная переменная с адресом необхожимого файла
-// let typeList = ['button', 'checkbox', 'file', 'hidden', 'image', 'password', 'radio', 'reset', 'submit', 'text'];
-                                                        //(в дальнейшем будет перезаписываться)
-//Первый вызов формы (создаёт login страницу)
-createForm(url);
 
+createForm(url);
 
 //------Блоки, отвечающие за создание элементов формы------
 //Создние label
 let createLabel = function(item, i) {
-    if(item.label != undefined || item.input.type == 'checkbox') {                       //проверка на наличие label'ов
-        let label = doc.createElement('label');         //в JSON-файле
-        label.htmlFor = 'input-' + i;
-        if(item.label != undefined)
+    if(item.label != undefined || item.input.type == 'checkbox') {                       //Проверка на наличие label'ов в JSON-файле или
+        let label = doc.createElement('label');                                          //чекбокса (это необходимо для корректной отрисовки
+        label.htmlFor = 'input-' + i;                                                    //чекбоксов в самом низу формы)
+
+        if(item.label != undefined)                                                      //Если лэйбл, то добавлем значение лэйбла из JSON                                                 
             label.textContent = item.label;
-        if(item.input != undefined && item.input.type == 'checkbox'){
+        if(item.input != undefined && item.input.type == 'checkbox'){                    //Если чекбокс, то добавляем класс и id для чекбокса
             label.classList.add('form-check-label');
             label.htmlFor = 'input-checkbox-' + i;
         }   
@@ -32,15 +28,15 @@ let createLabel = function(item, i) {
         return label;
     }
     else
-        return '';                                      //Возвращаем пустую строку,
-                                                        //если лэйблы не прописаны в JSON  
+        return '';          //Возвращаем пустую строку,
+                            //если лэйблы (или чекбокс внизу формы) не прописаны в JSON  
 };
 
 //Создание input
 let createInput = function(item, i) {
     let input;
-    if(item.input.type == 'technology'){
-        input = doc.createElement('select');
+    if(item.input.type == 'technology'){                       //Если тип input'a technology,
+        input = doc.createElement('select');                   //то создаётся select и options к нему
         item.input.technologies.forEach(function(item, i) {
             let option = doc.createElement('option');
             option.value = 'technology-' + i;
@@ -49,37 +45,33 @@ let createInput = function(item, i) {
         });
     }
 
-    else if(item.input.type == 'textarea'){
+    else if(item.input.type == 'textarea'){                    //Создаётся textarea
         input = doc.createElement('textarea');
         if(item.input.multiple)
             input.multiple = true;
     }
 
     else{
-        input = doc.createElement('input');
-        input.type = item.input.type;
+        input = doc.createElement('input');                    //Если не подошли условия выше, то берём тип
+        input.type = item.input.type;                          //input'a из JSON
     }
 
-    if(input.type == 'color')                           //Записываем значение в свойство list
-        input.setAttribute('list', 'color-list-' + i);                 //если это colorpicker
-    
-    if(input.type == "number") {
-        input.classList.add('phone');
-    }
+    if(input.type == 'color')                                  //Если input color,         
+        input.setAttribute('list', 'color-list-' + i);         //то ставим атрибут list
     
     if(item.input.required)                             //Если в JSON-файле прописан required: true
         input.required = true;                          //то записываем это значение в свойство required
 
     input.id = 'input-' + i;
 
-    if(item.input.type == 'checkbox'){
-        input.classList.add('form-check-input');
-        input.id = 'input-checkbox-' + i;
+    if(item.input.type == 'checkbox'){                  //Если чекбокс, то ставим для него 
+        input.classList.add('form-check-input');        //особый класс
+        input.id = 'input-checkbox-' + i;               //и id
     }   
         
- 
-    else {
-        input.classList.add('form-control');
+    else {                                              //Если любой другой класс, то ставим
+        input.classList.add('form-control');            //класс form-control
+
         if(item.input.placeholder != undefined)             //Проверка на наличие данных о placeholder
             input.placeholder = item.input.placeholder;     //в JSON-файле
     }
@@ -90,33 +82,40 @@ let createFormGroup = function(item) {
     let div = doc.createElement('div');
     div.classList.add('form-group');                    
     if(item != undefined && item.input != undefined && item.input.type == 'checkbox')  //Если мы оборачиваем в div чекбокс,
-        div.classList.add('form-check');                    //то к div добавлем класс специально для чебокса
+        div.classList.add('form-check');                                               //то к div добавлем класс специально для чебокса
     return div;
 };
 
 //Создание ссылок
 let createReferences = function(data, form) {  
-    if(data.references != undefined){             //Если данные есть данные о ссылка в JSON,
-        let divCheckbox;
-        let divRefs;
+    if(data.references != undefined){             //Если данные о ссылках присутствуют в документе
+
+        let divCheckbox;                          //Сюда будет помещаться div с чекбоксом и лэйблом                          
+        let divRefs;                              //А сюда все остальные указанные ссылки
         let ulCheckbox = doc.createElement('ul');
         let ulRefs = doc.createElement('ul');
         ulRefs.classList.add('nav', 'justify-content-between');   
-        data.references.forEach(function(item, i) {
+        data.references.forEach(function(item, i) {     //Перебираем ссылки
             let li = doc.createElement('li');
-            if(item.input != undefined) {
-            
-                let input = createInput(item, i);
+
+            //----Блок с чекбоксом----
+            if(item.input != undefined) {               //Если в ссылках указан input,
+                                                        //то создаётся чекбокс с лэйблом.
+                                                        //Они помещаются в отдельный список для корректного
+                                                        //отображения самого чекбокса и остальных ссылок
+                let input = createInput(item, i);      
                 let label = createLabel(item, i);
                 divCheckbox = createFormGroup(item);
 
                 li.append(input);
                 data.references.forEach(function(_item, j){
-                    if(_item['text without ref'] != undefined) {
-                        label.textContent = _item['text without ref'] + ' ';
-                        let ref = doc.createElement('a');
-                        ref.textContent = _item.text;
-                        ref.href = _item.ref;
+                    if(_item['text without ref'] != undefined) {                //Если присутствует текст без ссылки
+                        label.textContent = _item['text without ref'] + ' ';    //то он помещается в лэйбл
+                        if(_item.ref != undefined){                             //То же самое будет и с ссылкой, если она указана
+                            let ref = doc.createElement('a');
+                            ref.textContent = _item.text;
+                            ref.href = _item.ref;
+                        }
                         label.append(ref);
                         li.append(label);
                     }
@@ -127,13 +126,13 @@ let createReferences = function(data, form) {
                 divCheckbox.append(ulCheckbox);
             }
 
-            else if(item['text without ref'] == undefined){
-                divRefs = createFormGroup(item);
+            //----Блок с ссылками----
+            else if(item['text without ref'] == undefined && item.input == undefined){         //Если в JSON указаны только ссылки
+                divRefs = createFormGroup(item);                                               //то отработает этот код
                 let ref = doc.createElement('a');
-                ref.textContent = item.text;
-                ref.name = item.ref;                                //Т.к. название формы и название файла одинаково,
-                                                                    //то мы записываем название форму в свойство name ссылки,
-                li.classList.add('nav-item');                                                   //чтобы в дальнешем создавать указанну форму при клике на ссылку
+                ref.textContent = item.text;    
+                ref.name = item.ref;                //В имя ссылки так же записывается то, куда она должна вести                    
+                li.classList.add('nav-item');                                                 
                 ref.href = item.ref + '.html';
                 ref.classList.add('nav-link', 'px-0', 'json-ref'); 
                 
@@ -144,7 +143,7 @@ let createReferences = function(data, form) {
             
         });
 
-        if(divCheckbox != undefined)
+        if(divCheckbox != undefined)     
             form.append(divCheckbox);
         if(divRefs != undefined)
             form.append(divRefs);
@@ -209,15 +208,18 @@ let createFields = function(data, form) {                               //В э�
 
 //---------------------------------------------------------
 
-let addMask = function(data) {
+//---------------Добавление маски на поля------------------
+let addMask = function(data) {                                  //Тут используеться плагин masked-input
     data.fields.forEach(function(item, i) {
         if(item.input.mask != undefined){
             let input = doc.querySelector('#input-' + i);
+            input.classList.add('phone');
             input.type = 'text';
             $('#input-' + i).mask(item.input.mask);
         }
     });
 };
+//---------------------------------------------------------
 
 //----------------------Создание формы---------------------
 function createForm(url) {
@@ -233,107 +235,7 @@ function createForm(url) {
             createReferences(data, form);                               //Создаём ссылки                             
             createButtons(data, form);                                  //Создаём кнопки
             formContainer.append(form);                                 //Добавляем форму в контейнер
-            // console.log(data);
-
-            addMask(data);
+            addMask(data);                                              //Добавляем маску
         });  
 };
 //---------------------------------------------------------
-
-
-
-
-
-
-
-
-
-//------------------------------Ссылки--------------------------
-// if(data.references != undefined){                       //то мы создаём именно эти ссылки
-        // let div = createFormGroup();                        //Создаём обёртку
-
-        // let ul = doc.createElement('ul');                       //Создаём список
-        // ul.classList.add('nav', 'justify-content-between');     //С бутстраповскими классами
-        
-        // data.references.forEach(function(item, i) {             //Перебираем ссылки в JSON-файле
-        //     let li = doc.createElement('li');
-        //     li.classList.add('nav-item');
-                
-        //     if(item.input != undefined){
-        //         let div = createFormGroup(item);
-        //         div.append(createInput(item, i));
-        //         debugger
-        //         data.references.forEach(function(value, j) { 
-        //             if(value['text without ref'] != undefined){
-        //                 div.append(createText(value));
-        //             }
-                    
-        //             console.log(value);
-
-
-        //         });
-
-        //         li.append(div);
-        //     }
-
-        //     else {
-        //         let ref = doc.createElement('a');
-        //         ref.textContent = item.text;
-        //         ref.name = item.ref;                                //Т.к. название формы и название файла одинаково,
-        //                                                             //то мы записываем название форму в свойство name ссылки,
-        //                                                             //чтобы в дальнешем создавать указанну форму при клике на ссылку
-        //         ref.href = '#';
-        //         ref.classList.add('nav-link', 'px-0', 'json-ref');  
-
-        //         ref.onclick = function () {                         //Ставим обработчик на клик по ссылке
-        //             if(ref.name != 'rememberpassword'){             //!!!!!!
-        //                 form.remove();                                  //1.Очищаем форму
-        //                 url = "json/"+ ref.name + ".json";              //2.Берём имя ссылки и записываем её в url (пример: url = 'json/signup.json')
-        //                 createForm(url);                                //3.Создаём форму из указанного в предыдущем пункте файла
-        //             }
-        //         }
-        //         li.append(ref);
-        //     }
-        //     ul.append(li);
-        // });
-
-        // let li = doc.createElement('li');                       //Т.к. нигде не был указан переход на colorscheme,
-        // let ref = doc.createElement('a');                       //я добавил его к остальным ссылкам под input'ами
-        // ref.textContent = 'Change color scheme';
-        // ref.name = "colorscheme";
-        // ref.href = "#";
-        // ref.classList.add('nav-link', 'px-0', 'json-ref');
-        // ref.onclick = function () {                             //Всё работает по такой же схеме, как и выше
-        //     form.remove();
-        //     url = './json/colorscheme.json';
-        //     createForm(url);
-        // }
-
-        // li.append(ref);
-        // ul.append(li);
-
-        // div.append(ul);
-        // form.append(div);
-//     }
-//    else {                                                       //На случай если никаких ссылок в JSON-файле не указано,
-//         let div = createFormGroup();                            //(как в colorscheme.json), создаётся ссылка, ведущая обратно на
-//         let ul = doc.createElement('ul');                       //на форму авторизации
-//         ul.classList.add('nav', 'justify-content-between');
-//         let li = doc.createElement('li');
-//         let ref = doc.createElement('a');
-//         ref.textContent = 'Return to Sign In';
-//         ref.name = "signin";
-//         ref.href = "#";
-//         ref.classList.add('nav-link', 'px-0', 'json-ref');
-//         ref.onclick = function () {                            
-//             form.remove();
-//             url = './json/signin.json';
-//             createForm(url);
-//         }
-
-//         li.append(ref);
-//         ul.append(li);
-
-//         div.append(ul);
-//         form.append(div);
-//    }
