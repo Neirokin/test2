@@ -56,12 +56,18 @@ let createInput = function(item, i) {
         input.type = item.input.type;                          //input'a из JSON
     }
 
+    if(input.type == 'file' && item.input.filetype != undefined){
+        item.input.filetype.forEach(function(filetype) {
+            input.accept += '.' + filetype + ', ';
+        })
+    }
+
     if(input.type == 'color')                                  //Если input color,         
         input.setAttribute('list', 'color-list-' + i);         //то ставим атрибут list
     
     if(item.input.required)                             //Если в JSON-файле прописан required: true
         input.required = true;                          //то записываем это значение в свойство required
-
+    
     input.id = 'input-' + i;
 
     if(item.input.type == 'checkbox'){                  //Если чекбокс, то ставим для него 

@@ -1,30 +1,35 @@
 @import url('https://fonts.googleapis.com/css?family=Comfortaa&display=swap&subset=cyrillic,cyrillic-ext');
 body {
-	/* background-image: url(img/kosmos_69530878_orig_.jpg); */
-	/* color: white; */
-	background-color: gainsboro;
+	background-image: url(img/bg.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: white;
+/* 	background-color: gainsboro; */
 	font-family: Comfortaa, cursive;
 }
 .container {
-	background-color: white;
-}
-.btn_theme_space {
+	background-color: #0b0e1ede;
 	color: white;
-	border: 2px solid #0affd133;
 }
-.btn_theme_space:hover {
-	color: white;
-  background-color: rgba(4, 40, 58, 0.66);
+input, select, textarea{
+  background-color: #00000050 !important;
+	color: gray !important;
+	border-color: #444 !important;
 }
-input {
-	border: 2px solid #0affd129;
-	background-color: rgba(4, 40, 58, 0.66);
-	color: white;
+button {
+	background-color: transparent !important;
+	border-radius: 2px !important;
+}
+button:hover{
+	background-color: rgba(0, 123, 255, 0.2) !important;asdf
 }
 
-/* li > div {
-	padding-top: 0.5rem !important;
-	padding-bottom: 0.5rem !important;
-} */
-
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 
